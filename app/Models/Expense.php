@@ -23,7 +23,8 @@ class Expense extends Model
         'iban',
         'national_code',
         'reject_reason',
-        'is_confirmed'
+        'is_confirmed',
+        'is_paid'
     ];
 
     public function user(): BelongsTo

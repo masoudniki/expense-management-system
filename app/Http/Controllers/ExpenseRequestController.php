@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ExpenseConfirmRequest;
 use App\Http\Requests\ExpenseRejectRequest;
 use App\Http\Requests\ExpenseRequest;
+use App\Http\Requests\ManualExpensePaymentRequest;
 use App\Http\Resources\ExpenseResource;
 use App\Http\Resources\ExpenseRequestType;
+use App\Jobs\ExpenseDispatcherPaymentJob;
 use App\Models\Attachment;
 use App\Models\Expense;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,7 +19,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ExpenseRequestController extends Controller
 {
-    public function create(ExpenseRequest $expenseRequest){
+    public function create(ExpenseRequest $expenseRequest): JsonResponse
+    {
 
         $expense = Expense::query()->create($expenseRequest->validated());
 
@@ -34,7 +38,9 @@ class ExpenseRequestController extends Controller
 
         Attachment::query()->insert($attachmentData);
 
-        return new ExpenseResource($expense);
+        return (new ExpenseResource($expense))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
     public function list(){
         return Expense::collection(ExpenseRequest::byRole()->get());
@@ -43,9 +49,9 @@ class ExpenseRequestController extends Controller
     {
         return ExpenseRequestType::collection(ExpenseRequestType::all());
     }
-
     public function confirm(ExpenseConfirmRequest $expenseConfirmRequest){
         ExpenseRequest::query()->whereIn('id',$expenseConfirmRequest->only('expense_request_ids'));
+
         return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
     }
     public function reject(ExpenseRejectRequest $expenseRejectRequest){
@@ -54,10 +60,17 @@ class ExpenseRequestController extends Controller
             ExpenseRequest::query()->where('id',$validatedExpenseRequest['id'])->update(
                 [
                     'is_confirmed' => false,
-                    'reject_reason' => $validatedExpenseRequest['reject_reason']
+                    'reject_reason' => $validatedExpenseRequest['reject_reason'] ?? null
                 ]
             );
         }
+
+        return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
+    }
+    public function manualPayment(ManualExpensePaymentRequest $manualExpensePaymentRequest): JsonResponse
+    {
+        ExpenseDispatcherPaymentJob::dispatch($manualExpensePaymentRequest->only('expense_request_ids'));
+
         return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
     }
 

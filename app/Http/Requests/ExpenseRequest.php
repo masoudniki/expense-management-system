@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\IBANRule;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,7 +27,7 @@ class ExpenseRequest extends FormRequest
             'description' => ['required','string'],
             'national_code' => ['required','string','exists:users,national_code'],
             'expense_request_type_id' => ['required','int','exists:expense_requests_types,id'],
-            'iban' => ['required','string'],
+            'iban' => ['required','string',new IBANRule()],
             'attachments' => ['array'],
             'attachments.*' => ['required','mimes:jpg,jpeg,png,pdf','max:1024']
         ];
