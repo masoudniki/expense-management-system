@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Events\ExpensePaid;
 use App\Models\Enums\PaymentStatus;
 use App\Models\Expense;
 use App\Models\Payment;
@@ -19,7 +20,7 @@ use Illuminate\Support\Facades\Log;
 class ExpensePaymentJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
+    public $tries = 5;
     public PaymentGatewayInterface $paymentGateway;
     /**
      * Create a new job instance.
@@ -38,9 +39,10 @@ class ExpensePaymentJob implements ShouldQueue
      */
     public function handle(): void
     {
+        Log::debug("payment process for expense :expense_uuid",['expense_uuid'  => $this->expense->uuid]);
         // check expense has been paid?
         if($this->expense->is_paid){
-            Log::debug('expense :expense_uuid has been paid by another payment.try to fail current payment',['expense_uuid'  => $this->expense->uuid]);
+            Log::debug('expense :expense_uuid has been paid by another payment.try to fail current payment :payment',['expense_uuid'  => $this->expense->uuid,'payment' => $this->payment->uuid]);
             $this->payment->update(['status' => PaymentStatus::FAILED]);
             return;
         }
@@ -66,6 +68,7 @@ class ExpensePaymentJob implements ShouldQueue
 
                 $this->expense->update(['is_paid' => true]);
 
+                event(new ExpensePaid($this->expense,$this->payment));
             });
             Log::debug("payment :payment_uuid for expense :expense_uuid has been successfully processed.",['payment_uuid' => $this->payment->uuid, 'expense_uuid' => $this->expense->uuid]);
         }catch (\Exception $exception){
