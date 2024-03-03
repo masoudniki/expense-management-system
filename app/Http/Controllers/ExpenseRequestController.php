@@ -25,7 +25,7 @@ class ExpenseRequestController extends Controller
     public function create(ExpenseRequest $expenseRequest): JsonResponse
     {
         $expense=null;
-        DB::transaction(function (){
+        DB::transaction(function () use ($expenseRequest) {
             $expense = Expense::query()->create($expenseRequest->validated());
 
             $attachmentData = [];
