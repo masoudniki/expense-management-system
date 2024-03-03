@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ExpenseRejected;
 use App\Http\Requests\ExpenseConfirmRequest;
 use App\Http\Requests\ExpenseRejectRequest;
 use App\Http\Requests\ExpenseRequest;
@@ -50,24 +51,28 @@ class ExpenseRequestController extends Controller
         return ExpenseRequestType::collection(ExpenseRequestType::all());
     }
     public function confirm(ExpenseConfirmRequest $expenseConfirmRequest){
-        ExpenseRequest::query()->whereIn('id',$expenseConfirmRequest->only('expense_request_ids'));
+        Expense::query()->whereIn('id',$expenseConfirmRequest->only('expense_request_ids'));
 
         return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
     }
     public function reject(ExpenseRejectRequest $expenseRejectRequest){
         $validatedExpenseRequests=$expenseRejectRequest->only('expense_requests');
         foreach ($validatedExpenseRequests as $validatedExpenseRequest){
-            ExpenseRequest::query()->where('id',$validatedExpenseRequest['id'])->update(
+            Expense::query()->where('id',$validatedExpenseRequest['id'])->update(
                 [
                     'is_confirmed' => false,
                     'reject_reason' => $validatedExpenseRequest['reject_reason'] ?? null
                 ]
             );
+
+            $expense=Expense::query()->where('id',$validatedExpenseRequest['id'])->first();
+
+            event(new ExpenseRejected($expense));
         }
 
         return response()->json()->setStatusCode(Response::HTTP_NO_CONTENT);
     }
-    public function manualPayment(ManualExpensePaymentRequest $manualExpensePaymentRequest): JsonResponse
+    public function payNow(ManualExpensePaymentRequest $manualExpensePaymentRequest): JsonResponse
     {
         ExpenseDispatcherPaymentJob::dispatch($manualExpensePaymentRequest->only('expense_request_ids'));
 

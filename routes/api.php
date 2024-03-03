@@ -23,5 +23,6 @@ Route::prefix('/api/v1/expense-requests')->middleware('auth')->group(function ()
     Route::post('/',[ExpenseRequestController::class,'create']);
     Route::post('/confirm',[ExpenseRequestController::class,'confirm'])->can('confirm',Expense::class);
     Route::post('/reject',[ExpenseRequestController::class,'reject'])->can('reject',Expense::class);
+    Route::post('/pay-now',[ExpenseRequestController::class, 'payNow'])->can('payNow',Expense::class);
     Route::get('/attachments/{attachment:uuid}',[AttachmentController::class,'download']);
 });

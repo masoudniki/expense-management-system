@@ -18,4 +18,9 @@ class ExpensePolicy
     {
         return $user->role() == RoleEnums::ADMIN;
     }
+
+    public function payNow(User $user): bool
+    {
+        return $user->role() == RoleEnums::ADMIN;
+    }
 }
