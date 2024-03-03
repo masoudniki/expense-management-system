@@ -18,7 +18,7 @@ To install and run the Expense Management System locally, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/example/expenses.git
+    git clone https://github.com/masoudniki/expense-management-system
     ```
 
 2. Navigate to the project directory:
