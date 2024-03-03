@@ -24,7 +24,7 @@ To install and run the Expense Management System locally, follow these steps:
 2. Navigate to the project directory:
 
     ```bash
-    cd expenses
+    cd expense-management-system
     ```
 
 3. Install dependencies using Composer:
