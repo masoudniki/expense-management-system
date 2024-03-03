@@ -49,9 +49,9 @@ class User extends Authenticatable implements RoleInterface
         'role' => RoleEnums::class
     ];
 
-    public function expenseRequests(): HasMany
+    public function expense(): HasMany
     {
-        return $this->hasMany(ExpenseRequest::class);
+        return $this->hasMany(Expense::class);
     }
 
 }
