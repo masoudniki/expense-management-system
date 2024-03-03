@@ -18,6 +18,7 @@ class Expense extends Model
     protected $table = 'expense_requests';
 
     protected $fillable = [
+        'expense_request_type_id',
         'description',
         'amount',
         'iban',

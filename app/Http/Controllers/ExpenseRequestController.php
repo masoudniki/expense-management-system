@@ -14,6 +14,7 @@ use App\Models\Attachment;
 use App\Models\Expense;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
@@ -33,7 +34,8 @@ class ExpenseRequestController extends Controller
                 'uuid' => $uuid,
                 'path' => $filePath,
                 'extension' => $file->extension(),
-                'expense_id' => $expense->id,
+                'expense_request_id' => $expense->id,
+                'user_id' => Auth::id()
             ];
         }
 
