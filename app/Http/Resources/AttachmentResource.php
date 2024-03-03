@@ -17,7 +17,7 @@ class AttachmentResource extends JsonResource
         return [
             'uuid' => $this->resource->uuid,
             'extension' => $this->resource->extension,
-            'url' => route('attachment.download',['uuid'=>$this->resource->uuid])
+            'url' => route('attachment.download',['attachment'=>$this->resource->uuid])
         ];
     }
 }
