@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Events\ExpensePaid;
+use App\Events\ExpenseRejected;
+use App\Listeners\SendExpensePaidNotification;
+use App\Listeners\SendExpenseRejectedNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +22,12 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        ExpenseRejected::class => [
+            SendExpenseRejectedNotification::class
+        ],
+        ExpensePaid::class => [
+            SendExpensePaidNotification::class
+        ]
     ];
 
     /**

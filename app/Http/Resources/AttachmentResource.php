@@ -14,6 +14,10 @@ class AttachmentResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'uuid' => $this->resource->uuid,
+            'extension' => $this->resource->extension,
+            'url' => route('attachment.download',['uuid'=>$this->resource->uuid])
+        ];
     }
 }

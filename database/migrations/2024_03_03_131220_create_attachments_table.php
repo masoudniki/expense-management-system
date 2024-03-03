@@ -14,8 +14,13 @@ return new class extends Migration
         Schema::create('attachments', function (Blueprint $table) {
             $table->id();
             $table->uuid();
+
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
+
+            $table->unsignedBigInteger('expense_request_id');
+            $table->foreign('expense_request_id')->on('expense_requests')->references('id');
+
             $table->string('path');
             $table->string('extension');
             $table->timestamps();

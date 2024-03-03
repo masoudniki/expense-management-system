@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\ExpensePaid;
-use App\Events\ExpenseRejected;
 use App\Notifications\ExpensePaidNotification;
 
 class SendExpensePaidNotification

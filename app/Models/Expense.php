@@ -27,6 +27,12 @@ class Expense extends Model
         'is_paid'
     ];
 
+    public function uniqueIds()
+    {
+        return ['uuid'];
+
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -34,7 +40,7 @@ class Expense extends Model
 
     public function expenseRequestType(): BelongsTo
     {
-        return $this->belongsTo(ExpenseRequestType::class);
+        return $this->belongsTo(ExpenseRequestType::class,'expense_request_type_id');
     }
 
     public function attachments(): HasMany

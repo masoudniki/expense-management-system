@@ -15,7 +15,7 @@ class ExpenseRequestType extends Model
 
     public function expenseRequests(): HasMany
     {
-        return $this->hasMany(Expense::class);
+        return $this->hasMany(Expense::class,'expense_request_type_id');
     }
 
 }
