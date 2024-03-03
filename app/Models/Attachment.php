@@ -31,6 +31,12 @@ class Attachment extends Model
     }
 
     public function resolveRouteBinding($value, $field = null){
+
+        /*
+        * If the authenticated user has the role of employer, they are restricted to accessing files
+        * that they have created. This method ensures user scope is restricted accordingly.
+        */
+
         if (Auth::user()->role()==RoleEnums::EMPLOYER){
             return $this->where('user_id', Auth::id())->firstOrFail();
         }
