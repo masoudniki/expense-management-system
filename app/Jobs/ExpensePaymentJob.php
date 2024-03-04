@@ -47,12 +47,20 @@ class ExpensePaymentJob implements ShouldQueue
             return;
         }
 
+
+
         // set a lock to handle race condition on concurrent payments
         $lock=Cache::lock($this->expense->uuid,150);
 
         if(!$lock->get()){
             Log::debug('another job has acquired a lock on expense :expense_uuid try some other time',['expense_uuid'  => $this->expense->uuid]);
             $this->release($this->attempts()*150);
+            return;
+        }
+
+        // check if current payment has been processed or not
+        if($this->payment->status!=PaymentStatus::PENDING){
+            Log::debug('current payment has been processed',['expense_uuid'  => $this->expense->uuid , 'payment_uuid' => $this->payment->uuid]);
             return;
         }
 
