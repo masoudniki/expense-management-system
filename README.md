@@ -18,13 +18,13 @@ To install and run the Expense Management System locally, follow these steps:
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/masoudniki/expense-management-system
+    git clone https://github.com/example/expenses.git
     ```
 
 2. Navigate to the project directory:
 
     ```bash
-    cd expense-management-system
+    cd expenses
     ```
 
 3. Install dependencies using Composer:
@@ -53,4 +53,18 @@ To install and run the Expense Management System locally, follow these steps:
     php artisan serve
     ```
 
-8. Access the application in your web browser at `http://localhost:8000`.
+8. To process queued jobs, run the queue worker:
+
+    ```bash
+    php artisan queue:work
+    ```
+
+9. To run the scheduler for scheduled tasks, use the following command:
+
+    ```bash
+    php artisan schedule:work
+    ```
+
+10. Access the application in your web browser at `http://localhost:8000`.
+
+
